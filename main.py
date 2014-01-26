@@ -2,6 +2,7 @@
 import sys
 import ply.yacc as yacc
 from Cparser import Cparser
+from TypeChecker import TypeChecker
 
 
 if __name__ == '__main__':
@@ -16,4 +17,7 @@ if __name__ == '__main__':
     Cparser = Cparser()
     parser = yacc.yacc(module=Cparser)
     text = file.read()
-    print(parser.parse(text, lexer=Cparser.scanner).toString(0))
+    print parser.parse(text, lexer=Cparser.scanner).toString(0);
+    ast = parser.parse(text, lexer=Cparser.scanner)
+    typeChecker = TypeChecker()
+    typeChecker.visit(ast, None)   # or alternatively ast.accept(typeChecker)

@@ -47,15 +47,15 @@ class Cparser(object):
         """program : declarations fundefs instructions"""
         p[0] = AST.Program(p[1], p[2], p[3])
         #print(p[0].toString(0))
-        #p[1].setParent(p[0])
-        #p[2].setParent(p[0])
-        #p[3].setParent(p[0])
+        p[1].setParent(p[0])
+        p[2].setParent(p[0])
+        p[3].setParent(p[0])
 
     def p_declarations(self, p):
         """declarations : declarations declaration"""
         p[0] = AST.Declarations(p[1], p[2])
-        #p[1].setParent(p[0])
-        #p[2].setParent(p[0])
+        p[1].setParent(p[0])
+        p[2].setParent(p[0])
 
     def p_declarations_1(self, p):
         """declarations : """
@@ -202,12 +202,17 @@ class Cparser(object):
         p[0] = AST.Condition(p[1])
         #p[1].setParent(p[0])
 
-    def p_const(self, p):
-        """const : INTEGER
-                 | FLOAT
-                 | STRING"""
-        p[0] = AST.Const(p[1])
+    def p_int(self, p):
+        """const : INTEGER"""
+        p[0] = AST.Integer(p[1])
 
+    def p_float(self, p):
+        """const : FLOAT"""
+        p[0] = AST.Float(p[1])
+
+    def p_string(self, p):
+        """const : STRING"""
+        p[0] = AST.String(p[1])
 
     def p_expression_const(self, p):
         """expression : const"""

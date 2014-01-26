@@ -1,4 +1,6 @@
 class Node(object):
+    def accept(self, visitor, table):
+        return visitor.visit(self)
     def setParent(self, parent):
         self.parent = parent
 
@@ -7,6 +9,7 @@ class Program(Node):
         self.declarations = declarations
         self.fundefs = fundefs
         self.instructions = instructions
+        self.children = ( declarations, fundefs, instructions )
     def toString(self, i):
         return self.declarations.toString(i) + \
                (self.fundefs.toString(i) if("toString" in dir(self.fundefs)) else '')+ \
@@ -16,6 +19,7 @@ class Declarations(Node):
     def __init__(self, declarations, declaration):
         self.declarations = declarations
         self.declaration = declaration
+        self.children = ( declarations, declaration )
     def toString(self, i):
         return self.declarations.toString(i) + \
                self.declaration.toString(i)
@@ -24,6 +28,7 @@ class Declaration(Node):
     def __init__(self, type, inits):
         self.type = type
         self.inits = inits
+        self.children = ( inits )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -35,6 +40,7 @@ class Inits(Node):
     def __init__(self, inits, init):
         self.inits = inits
         self.init = init
+        self.children = ( inits, init )
     def toString(self, i):
         return (self.inits.toString(i) if("toString" in dir(self.inits)) else '') + \
                (self.init.toString(i) if("toString" in dir(self.init)) else '')
@@ -43,6 +49,7 @@ class Init(Node):
     def __init__(self, ID, expr):
         self.ID = ID
         self.expr = expr
+        self.children = ( expr )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -54,6 +61,7 @@ class Instructions(Node):
     def __init__(self, instructions, instruction):
         self.instructions = instructions
         self.instruction = instruction
+        self.children = ( instructions, instruction )
     def toString(self, i):
         return (self.instructions.toString(i) if("toString" in dir(self.instructions)) else '') + \
                (self.instruction.toString(i) if("toString" in dir(self.instruction)) else '')
@@ -62,12 +70,14 @@ class Instructions(Node):
 class Instruction(Node):
     def __init__(self, instruction):
         self.instruction = instruction
+        self.children = ( instruction )
     def toString(self, i):
         return self.instruction.toString(i)
 
 class Print(Node):
     def __init__(self, expression):
         self.expression = expression
+        self.children = ( expression )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -79,6 +89,7 @@ class Labeled(Node):
     def __init__(self, id, instruction):
         self.id = id
         self.instruction = instruction
+        self.children = ( instruction )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -90,6 +101,7 @@ class Assignment(Node):
     def __init__(self, id, expression):
         self.id = id
         self.expression = expression
+        self.children = ( expression )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -101,6 +113,7 @@ class Choice(Node):
         self.cond = cond
         self.instruction = instruction
         self.instruction2 = instruction2
+        self.children = ( cond, instruction, instruction2 )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -115,6 +128,7 @@ class While(Node):
     def __init__(self, condition, instruction):
         self.condition = condition
         self.instruction = instruction
+        self.children = ( condition, instruction )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -127,6 +141,7 @@ class Repeat(Node):
     def __init__(self, inst, cond):
         self.inst = inst
         self.cond = cond
+        self.children = ( inst, cond )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -138,6 +153,7 @@ class Repeat(Node):
 class Return(Node):
     def __init__(self, expression):
         self.expression = expression
+        self.children = ( expression )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -148,6 +164,7 @@ class Return(Node):
 class Keyword(Node):
     def __init__(self, keyword):
         self.keyword = keyword
+        self.children = (  )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -158,19 +175,42 @@ class CompoundInstruction(Node):
     def __init__(self, declarations, instructions):
         self.declarations = declarations
         self.instructions = instructions
+        self.children = ( declarations, instructions )
     def toString(self, i):
         return self.declarations.toString(i) + self.instructions.toString(i)
 
 class Condition(Node):
     def __init__(self, expression):
         self.expression = expression
+        self.children = ( expression )
     def toString(self, i):
         return self.expression.toString(i)
 
 
-class Const(Node):
+class Integer(Node):
     def __init__(self, value):
         self.value = value
+        self.children = ( )
+    def toString(self, i):
+        pal = ""
+        for x in range(0, i):
+            pal += '| '
+        return pal + self.value + '\n'
+
+class Float(Node):
+    def __init__(self, value):
+        self.value = value
+        self.children = ( )
+    def toString(self, i):
+        pal = ""
+        for x in range(0, i):
+            pal += '| '
+        return pal + self.value + '\n'
+
+class String(Node):
+    def __init__(self, value):
+        self.value = value
+        self.children = ( )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -180,6 +220,7 @@ class Const(Node):
 class Variable(Node):
     def __init__(self, name):
         self.name = name
+        self.children = ( )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -191,6 +232,7 @@ class BinExpression(Node):
         self.expr1 = expr1
         self.sign = sign
         self.expr2 = expr2
+        self.children = ( expr1, sign, expr2 )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -200,6 +242,7 @@ class BinExpression(Node):
 class ExpressionInParentheses(Node):
     def __init__(self, expression):
         self.expression = expression
+        self.children = ( expression )
     def toString(self, i):
         return self.expression.toString(i)
 
@@ -207,6 +250,7 @@ class Funcall(Node):
     def __init__(self, ID, exprList):
         self.ID = ID
         self.exprList = exprList
+        self.children = ( exprList )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -218,6 +262,7 @@ class ExpressionList(Node):
     def __init__(self, expressionList, expression):
         self.expressionList = expressionList
         self.expression = expression
+        self.children = ( expressionList, expression)
     def toString(self, i):
         return (self.expressionList.toString(i) if("toString" in dir(self.expressionList)) else '') + \
                (self.expression.toString(i) if("toString" in dir(self.expression)) else '')
@@ -227,6 +272,7 @@ class FunctionDefinitions(Node):
     def __init__(self, fundef, fundefs):
         self.fundef = fundef
         self.fundefs = fundefs
+        self.children = ( fundef, fundefs)
     def toString(self, i):
         return self.fundef.toString(i) + self.fundefs.toString(i)
 
@@ -236,6 +282,7 @@ class FunctionDefinition(Node):
         self.ID = ID
         self.argList = argList
         self.compoundInstr = compoundInstr
+        self.children = ( argList, compoundInstr)
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -251,6 +298,7 @@ class ArgumentList(Node):
     def __init__(self, argList, arg):
         self.argList = argList
         self.arg = arg
+        self.children = ( argList, arg )
     def toString(self, i):
         return (self.argList.toString(i) if("toString" in dir(self.argList)) else '') + \
                (self.arg.toString(i) if("toString" in dir(self.arg)) else '')
@@ -259,6 +307,7 @@ class Argument(Node):
     def __init__(self, TYPE, ID):
         self.TYPE = TYPE
         self.ID = ID
+        self.children = ( )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
@@ -268,6 +317,7 @@ class Argument(Node):
 class Empty(Node):
     def __init__(self):
         self.name = ""
+        self.children = ( )
     def toString(self, i):
         pal = ""
         for x in range(0, i):

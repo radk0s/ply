@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
-
+import AST
 
 class NodeVisitor(object):
 
-    def visit(self, node):
+    def visit(self, node, table):
         method = 'visit_' + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
-        return visitor(node)
+        return visitor(node, table)
 
 
     def generic_visit(self, node):        # Called if no explicit visitor function exists for a node.
@@ -23,38 +23,108 @@ class NodeVisitor(object):
                 elif isinstance(child, AST.Node):
                     self.visit(child)
 
-    # simpler version of generic_visit, not so general
-    #def generic_visit(self, node):
-    #    for child in node.children:
-    #        self.visit(child)
-
-
 
 class TypeChecker(NodeVisitor):
 
-    def visit_BinExpr(self, node):
-                                          # alternative usage,
-                                          # requires definition of accept method in class Node
-        type1 = self.visit(node.left)     # type1 = node.left.accept(self) 
-        type2 = self.visit(node.right)    # type2 = node.right.accept(self)
-        op    = node.op;
-        # ... 
-        #
- 
-    def visit_RelExpr(self, node):
-        type1 = self.visit(node.left)     # type1 = node.left.accept(self) 
-        type2 = self.visit(node.right)    # type2 = node.right.accept(self)
-        # ... 
-        #
+    def visit_Program(self, node, table):
+        symbolTable = {}
+        print(symbolTable)
+        self.visit(node.declarations, symbolTable)
+        self.visit(node.fundefs, symbolTable)
+        self.visit(node.instructions, symbolTable)
 
-    def visit_Integer(self, node):
-        return 'int'
+    def visit_Declarations(self, node, table):
+        print(table)
+        self.visit(node.declarations, table)
+        self.visit(node.declaration, table)
 
-    #def visit_Float(self, node):
-    # ... 
-    # 
+    def visit_Declaration(self, node, table):
+        print(table)
+        type = node.type
+        table[type] = []
+        print(table)
+        self.visit(node.inits, table)
 
-    # ... 
-    # 
+    def visit_Inits(self, node, table):
+        print("9QQ")
+
+    def visit_Init(self, node, table):
+        print("8QQ")
+
+    def visit_Instructions(self, node, table):
+        print("9QQ")
+
+    def visit_Instruction(self, node, table):
+        print("8QQ")
+
+    def visit_Print(self, node, table):
+        print("9QQ")
+
+    def visit_Labeled(self, node, table):
+        print("8QQ")
+
+    def visit_Assigment(self, node, table):
+        print("8QQ")
+
+    def visit_Choice(self, node, table):
+        print("9QQ")
+
+    def visit_While(self, node, table):
+        print("8QQ")
+
+    def visit_Repeat(self, node, table):
+        print("9QQ")
+
+    def visit_Return(self, node, table):
+        print("8QQ")
+
+    def visit_Keyword(self, node, table):
+        print("9QQ")
+
+    def visit_CompoundInstruction(self, node, table):
+        print("8QQ")
+
+    def visit_Condition(self, node, table):
+        print("8QQ")
+
+    def visit_Integer(self, node, table):
+        print("9QQ")
+
+    def visit_Float(self, node, table):
+        print("8QQ")
+
+    def visit_String(self, node, table):
+        print("9QQ")
+
+    def visit_Variable(self, node, table):
+        print("8QQ")
+
+    def visit_BinExpression(self, node, table):
+        print("9QQ")
+
+    def visit_ExpressionInParentheses(self, node, table):
+        print("8QQ")
+
+    def visit_Funcall(self, node, table):
+        print("8QQ")
+
+    def visit_ExpressionList(self, node, table):
+        print("8QQ")
+
+    def visit_FunctionDefinitions(self, node, table):
+        print("8QQ")
+
+    def visit_FunctionDefinition(self, node, table):
+        print("9QQ")
+
+    def visit_ArgumentList(self, node, table):
+        print("8QQ")
+
+    def visit_Argument(self, node, table):
+        print("9QQ")
+
+    def visit_Empty(self, node, table):
+        print("8QQ")
+
 
 
