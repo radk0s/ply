@@ -26,6 +26,8 @@ class NodeVisitor(object):
 
 class TypeChecker(NodeVisitor):
 
+    stack = []
+
     def visit_Program(self, node, table):
         symbolTable = {}
         print(symbolTable)
@@ -34,22 +36,22 @@ class TypeChecker(NodeVisitor):
         self.visit(node.instructions, symbolTable)
 
     def visit_Declarations(self, node, table):
-        print(table)
         self.visit(node.declarations, table)
         self.visit(node.declaration, table)
 
     def visit_Declaration(self, node, table):
         print(table)
         type = node.type
-        table[type] = []
-        print(table)
+        self.stack.append(type)
         self.visit(node.inits, table)
 
     def visit_Inits(self, node, table):
-        print("9QQ")
+        if ( node.inits != None):
+            self.visit(node.inits, table)
+        self.visit(node.init, table)
 
     def visit_Init(self, node, table):
-        print("8QQ")
+        self.visit(node.expr, table)
 
     def visit_Instructions(self, node, table):
         print("9QQ")
@@ -88,13 +90,22 @@ class TypeChecker(NodeVisitor):
         print("8QQ")
 
     def visit_Integer(self, node, table):
-        print("9QQ")
+        tmp = node.parent
+        while(not "type" in dir(tmp)):
+            tmp = tmp.parent
+        print(node.parent.ID, tmp.type, node.value)
 
     def visit_Float(self, node, table):
-        print("8QQ")
+        tmp = node.parent
+        while(not "type" in dir(tmp)):
+            tmp = tmp.parent
+        print(node.parent.ID, tmp.type, node.value)
 
     def visit_String(self, node, table):
-        print("9QQ")
+        tmp = node.parent
+        while(not "type" in dir(tmp)):
+            tmp = tmp.parent
+        print(node.parent.ID, tmp.type, node.value)
 
     def visit_Variable(self, node, table):
         print("8QQ")
