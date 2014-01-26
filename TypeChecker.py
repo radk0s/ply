@@ -10,7 +10,7 @@ class NodeVisitor(object):
         return visitor(node, table)
 
 
-    def generic_visit(self, node):        # Called if no explicit visitor function exists for a node.
+    def generic_visit(self, node, table):        # Called if no explicit visitor function exists for a node.
         if isinstance(node, list):
             for elem in node:
                 self.visit(elem)
@@ -26,11 +26,10 @@ class NodeVisitor(object):
 
 class TypeChecker(NodeVisitor):
 
-    stack = []
+    scopeStack = []
 
     def visit_Program(self, node, table):
         symbolTable = {}
-        print(symbolTable)
         self.visit(node.declarations, symbolTable)
         self.visit(node.fundefs, symbolTable)
         self.visit(node.instructions, symbolTable)
@@ -40,9 +39,6 @@ class TypeChecker(NodeVisitor):
         self.visit(node.declaration, table)
 
     def visit_Declaration(self, node, table):
-        print(table)
-        type = node.type
-        self.stack.append(type)
         self.visit(node.inits, table)
 
     def visit_Inits(self, node, table):
@@ -54,40 +50,54 @@ class TypeChecker(NodeVisitor):
         self.visit(node.expr, table)
 
     def visit_Instructions(self, node, table):
-        print("9QQ")
+        if ( node.instructions != None):
+            self.visit(node.instructions, table)
+        self.visit(node.instruction, table)
 
     def visit_Instruction(self, node, table):
-        print("8QQ")
-
+        self.visit(node.instruction, table)
+        pass
     def visit_Print(self, node, table):
-        print("9QQ")
+        self.visit(node.expression, table)
 
     def visit_Labeled(self, node, table):
-        print("8QQ")
+        node.id
+        self.visit(node.instruction, table)
 
     def visit_Assigment(self, node, table):
-        print("8QQ")
+        node.id
+        self.visit(node.expression, table)
 
     def visit_Choice(self, node, table):
-        print("9QQ")
+        self.visit(node.cond, table)
+        self.visit(node.instruction, table)
+        self.visit(node.instruction2, table)
 
     def visit_While(self, node, table):
-        print("8QQ")
+        self.visit(node.condition, table)
+        self.visit(node.instruction, table)
+        pass
 
     def visit_Repeat(self, node, table):
-        print("9QQ")
+        self.visit(node.cond, table)
+        self.visit(node.inst, table)
 
     def visit_Return(self, node, table):
-        print("8QQ")
+        self.visit(node.expression, table)
 
     def visit_Keyword(self, node, table):
-        print("9QQ")
+        print(node.keyword)
 
     def visit_CompoundInstruction(self, node, table):
-        print("8QQ")
+        #newSCOPE
+        self.visit(node.declarations, table)
+        print node.instructions.instructions
+        self.visit(node.instructions, table)
+        pass
 
     def visit_Condition(self, node, table):
-        print("8QQ")
+        self.visit(node.expression, table)
+        pass
 
     def visit_Integer(self, node, table):
         tmp = node.parent
@@ -108,7 +118,10 @@ class TypeChecker(NodeVisitor):
         print(node.parent.ID, tmp.type, node.value)
 
     def visit_Variable(self, node, table):
-        print("8QQ")
+        tmp = node.parent
+        while(not "type" in dir(tmp)):
+            tmp = tmp.parent
+        print(node.parent.ID, tmp.type, node.name)
 
     def visit_BinExpression(self, node, table):
         print("9QQ")
