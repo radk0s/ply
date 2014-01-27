@@ -1,5 +1,5 @@
 class Node(object):
-    def accept(self, visitor, table):
+    def accept(self, visitor, table = None):
         return visitor.visit(self)
     def setParent(self, parent):
         self.parent = parent
