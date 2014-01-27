@@ -46,15 +46,15 @@ class Inits(Node):
                (self.init.toString(i) if("toString" in dir(self.init)) else '')
 
 class Init(Node):
-    def __init__(self, ID, expr):
-        self.ID = ID
-        self.expr = expr
-        self.children = ( expr )
+    def __init__(self, id, expression):
+        self.id = id
+        self.expression = expression
+        self.children = ( expression )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
-        return pal + '=' + '\n' + pal + '| ' + self.ID + '\n' + self.expr.toString(i+1)
+        return pal + '=' + '\n' + pal + '| ' + self.id + '\n' + self.expression.toString(i+1)
 
 
 class Instructions(Node):
@@ -109,18 +109,18 @@ class Assignment(Node):
         return pal + '=' + '\n' + pal + '| ' + self.id + '\n' + self.expression.toString(i+1)
 
 class Choice(Node):
-    def __init__(self, cond, instruction, instruction2):
-        self.cond = cond
-        self.instruction = instruction
+    def __init__(self, condition, instruction1, instruction2):
+        self.condition = condition
+        self.instruction1 = instruction1
         self.instruction2 = instruction2
-        self.children = ( cond, instruction, instruction2 )
+        self.children = ( condition, instruction1, instruction2 )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
         return pal + 'IF' + '\n' + \
-               self.cond.toString(i+1) + \
-               self.instruction.toString(i+1) + \
+               self.condition.toString(i+1) + \
+               self.instruction1.toString(i+1) + \
                pal + 'ELSE' + '\n' + \
                self.instruction2.toString(i+1)
 
@@ -138,16 +138,16 @@ class While(Node):
                self.instruction.toString(i+1)
 
 class Repeat(Node):
-    def __init__(self, inst, cond):
-        self.inst = inst
-        self.cond = cond
-        self.children = ( inst, cond )
+    def __init__(self, instruction, condition):
+        self.instruction = instruction
+        self.condition = condition
+        self.children = ( instruction, condition )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
-        return pal + 'REPEAT' + '\n' + self.inst.toString(i+1) + \
-               pal + 'UNTIL' + '\n' + self.cond.toString(i+1)
+        return pal + 'REPEAT' + '\n' + self.instruction.toString(i+1) + \
+               pal + 'UNTIL' + '\n' + self.condition.toString(i+1)
 
 
 class Return(Node):
@@ -228,16 +228,16 @@ class Variable(Node):
         return pal + self.name + '\n'
 
 class BinExpression(Node):
-    def __init__(self, expr1, sign, expr2):
-        self.expr1 = expr1
-        self.sign = sign
-        self.expr2 = expr2
-        self.children = ( expr1, sign, expr2 )
+    def __init__(self, expression1, operator, expression2):
+        self.expression1 = expression1
+        self.operator = operator
+        self.expression2 = expression2
+        self.children = ( expression1, operator, expression2 )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
-        return pal + self.sign + '\n' +  self.expr1.toString(i+1) + self.expr2.toString(i+1)
+        return pal + self.operator + '\n' +  self.expression1.toString(i+1) + self.expression2.toString(i+1)
 
 class ExpressionInParentheses(Node):
     def __init__(self, expression):
@@ -247,16 +247,16 @@ class ExpressionInParentheses(Node):
         return self.expression.toString(i)
 
 class Funcall(Node):
-    def __init__(self, ID, exprList):
-        self.ID = ID
-        self.exprList = exprList
-        self.children = ( exprList )
+    def __init__(self, id, expressionList):
+        self.id = id
+        self.expressionList = expressionList
+        self.children = ( expressionList )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
         return pal + 'FUNCALL\n' + pal + \
-               '| ' + self.ID + '\n' + self.exprList.toString(i+1)
+               '| ' + self.id + '\n' + self.expressionList.toString(i+1)
 
 class ExpressionList(Node):
     def __init__(self, expressionList, expression):
@@ -277,22 +277,22 @@ class FunctionDefinitions(Node):
         return self.fundef.toString(i) + self.fundefs.toString(i)
 
 class FunctionDefinition(Node):
-    def __init__(self, TYPE, ID, argList, compoundInstr):
-        self.TYPE = TYPE
-        self.ID = ID
+    def __init__(self, type, id, argList, compoundInstruction):
+        self.type = type
+        self.id = id
         self.argList = argList
-        self.compoundInstr = compoundInstr
-        self.children = ( argList, compoundInstr)
+        self.compoundInstruction = compoundInstruction
+        self.children = ( argList, compoundInstruction)
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
         #return pal + self.TYPE + '\n' + pal + self.ID + '\n' + self.first.toString(i+1) + self.second.toString(i+1)
         return pal + 'FUNDEF' + '\n' + \
-               pal + '| ' + self.ID + '\n' + \
-               '| ' + 'RET ' + self.TYPE + '\n' + \
+               pal + '| ' + self.id + '\n' + \
+               '| ' + 'RET ' + self.type + '\n' + \
                self.argList.toString(i+1) + \
-               self.compoundInstr.toString(i+1)
+               self.compoundInstruction.toString(i+1)
 
 class ArgumentList(Node):
     def __init__(self, argList, arg):
@@ -304,15 +304,15 @@ class ArgumentList(Node):
                (self.arg.toString(i) if("toString" in dir(self.arg)) else '')
 
 class Argument(Node):
-    def __init__(self, TYPE, ID):
-        self.TYPE = TYPE
-        self.ID = ID
+    def __init__(self, type, id):
+        self.type = type
+        self.id = id
         self.children = ( )
     def toString(self, i):
         pal = ""
         for x in range(0, i):
             pal += '| '
-        return pal + 'ARG ' + self.ID + '\n'
+        return pal + 'ARG ' + self.id + '\n'
 
 class Empty(Node):
     def __init__(self):
