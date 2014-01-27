@@ -3,9 +3,9 @@
 import AST
 from Symboltable import *
 
-class NodeVisitor(object):
 
-    def visit(self, node, table = None):
+class NodeVisitor(object):
+    def visit(self, node, table=None):
         method = 'visit_' + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
         return visitor(node, table)
@@ -26,7 +26,6 @@ class NodeVisitor(object):
 
 
 class TypeChecker(NodeVisitor):
-
     def __init__(self):
         self.ttype = {}
         self.ttype['+'] = {}
@@ -41,12 +40,120 @@ class TypeChecker(NodeVisitor):
         self.ttype['OR'] = {}
         self.ttype['SHL'] = {}
         self.ttype['SHR'] = {}
-        self.ttype['EQ'] = {}
-        self.ttype['NEQ'] = {}
+        self.ttype['=='] = {}
+        self.ttype['!='] = {}
         self.ttype['>'] = {}
         self.ttype['<'] = {}
-        self.ttype['LE'] = {}
-        self.ttype['GE'] = {}
+        self.ttype['<='] = {}
+        self.ttype['>='] = {}
+
+        self.ttype['+']['int'] = {}
+        self.ttype['-']['int'] = {}
+        self.ttype['*']['int'] = {}
+        self.ttype['/']['int'] = {}
+        self.ttype['%']['int'] = {}
+        self.ttype['^']['int'] = {}
+        self.ttype['|']['int'] = {}
+        self.ttype['&']['int'] = {}
+        self.ttype['AND']['int'] = {}
+        self.ttype['OR']['int'] = {}
+        self.ttype['SHL']['int'] = {}
+        self.ttype['SHR']['int'] = {}
+        self.ttype['==']['int'] = {}
+        self.ttype['!=']['int'] = {}
+        self.ttype['>']['int'] = {}
+        self.ttype['<']['int'] = {}
+        self.ttype['<=']['int'] = {}
+        self.ttype['>=']['int'] = {}
+
+        self.ttype['+']['float'] = {}
+        self.ttype['-']['float'] = {}
+        self.ttype['*']['float'] = {}
+        self.ttype['/']['float'] = {}
+        self.ttype['%']['float'] = {}
+        self.ttype['==']['float'] = {}
+        self.ttype['!=']['float'] = {}
+        self.ttype['>']['float'] = {}
+        self.ttype['<']['float'] = {}
+        self.ttype['<=']['float'] = {}
+        self.ttype['>=']['float'] = {}
+
+        self.ttype['+']['string'] = {}
+        self.ttype['*']['string'] = {}
+        self.ttype['==']['string'] = {}
+        self.ttype['!=']['string'] = {}
+        self.ttype['>']['string'] = {}
+        self.ttype['<']['string'] = {}
+        self.ttype['<=']['string'] = {}
+        self.ttype['>=']['string'] = {}
+
+        self.ttype['+']['int']['int'] = 'int'
+        self.ttype['-']['int']['int'] = 'int'
+        self.ttype['*']['int']['int'] = 'int'
+        self.ttype['/']['int']['int'] = 'int'
+        self.ttype['%']['int']['int'] = 'int'
+        self.ttype['^']['int']['int'] = 'int'
+        self.ttype['|']['int']['int'] = 'int'
+        self.ttype['&']['int']['int'] = 'int'
+        self.ttype['AND']['int']['int'] = 'int'
+        self.ttype['OR']['int']['int'] = 'int'
+        self.ttype['SHL']['int']['int'] = 'int'
+        self.ttype['SHR']['int']['int'] = 'int'
+        self.ttype['==']['int']['int'] = 'int'
+        self.ttype['!=']['int']['int'] = 'int'
+        self.ttype['>']['int']['int'] = 'int'
+        self.ttype['<']['int']['int'] = 'int'
+        self.ttype['<=']['int']['int'] = 'int'
+        self.ttype['>=']['int']['int'] = 'int'
+
+        self.ttype['+']['int']['float'] = 'float'
+        self.ttype['-']['int']['float'] = 'float'
+        self.ttype['*']['int']['float'] = 'float'
+        self.ttype['/']['int']['float'] = 'float'
+        self.ttype['==']['int']['float'] = 'int'
+        self.ttype['!=']['int']['float'] = 'int'
+        self.ttype['>']['int']['float'] = 'int'
+        self.ttype['<']['int']['float'] = 'int'
+        self.ttype['<=']['int']['float'] = 'int'
+        self.ttype['>=']['int']['float'] = 'int'
+
+        self.ttype['+']['float']['float'] = 'float'
+        self.ttype['-']['float']['float'] = 'float'
+        self.ttype['*']['float']['float'] = 'float'
+        self.ttype['/']['float']['float'] = 'float'
+        self.ttype['==']['float']['float'] = 'int'
+        self.ttype['!=']['float']['float'] = 'int'
+        self.ttype['>']['float']['float'] = 'int'
+        self.ttype['<']['float']['float'] = 'int'
+        self.ttype['<=']['float']['float'] = 'int'
+        self.ttype['>=']['float']['float'] = 'int'
+
+        self.ttype['+']['float']['int'] = 'float'
+        self.ttype['-']['float']['int'] = 'float'
+        self.ttype['*']['float']['int'] = 'float'
+        self.ttype['/']['float']['int'] = 'float'
+        self.ttype['==']['float']['int'] = 'int'
+        self.ttype['!=']['float']['int'] = 'int'
+        self.ttype['>']['float']['int'] = 'int'
+        self.ttype['<']['float']['int'] = 'int'
+        self.ttype['<=']['float']['int'] = 'int'
+        self.ttype['>=']['float']['int'] = 'int'
+
+        self.ttype['+']['string']['string'] = 'string'
+        self.ttype['*']['string']['int'] = 'string'
+        self.ttype['==']['string']['string'] = 'int'
+        self.ttype['!=']['string']['string'] = 'int'
+        self.ttype['>']['string']['string'] = 'int'
+        self.ttype['<']['string']['string'] = 'int'
+        self.ttype['<=']['string']['string'] = 'int'
+        self.ttype['>=']['string']['string'] = 'int'
+
+    def check_new_type(self, expr1, op, expr2):
+        try:
+            return self.ttype[op][expr1][expr2]
+        except:
+            return 'undefined'
+        #return self.ttype[op][expr1][expr2]
 
     def visit_Program(self, node, table):
         symbolTable = SymbolTable(None, 'global')
@@ -62,13 +169,13 @@ class TypeChecker(NodeVisitor):
         inits = []
         tmp = node.inits
         inits.append(tmp.init)
-        while(tmp.inits):
+        while (tmp.inits):
             tmp = tmp.inits
             inits.append(tmp.init)
         inits.reverse()
         for init in inits:
-            if(not table.put(VariableSymbol(init.id,node.type))):
-                print 'error variable alreday declared: '+ init.id
+            if (not table.put(VariableSymbol(init.id, node.type))):
+                print 'Line '+str(init.line)+': variable '+ init.id+' alreday declared'
 
     def visit_Inits(self, node, table):
         if ( node.inits ):
@@ -77,7 +184,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_Init(self, node, table):
         #print node.ID
-        self.visit(node.expression, table)
+        return self.visit(node.expression, table)
 
     def visit_Instructions(self, node, table):
         if ( node.instructions ):
@@ -85,14 +192,14 @@ class TypeChecker(NodeVisitor):
         self.visit(node.instruction, table)
 
     def visit_Instruction(self, node, table):
-        self.visit(node.instruction, table)
+        return self.visit(node.instruction, table)
 
     def visit_Print(self, node, table):
-        self.visit(node.expression, table)
+        return self.visit(node.expression, table)
 
     def visit_Labeled(self, node, table):
         #print node.id
-        self.visit(node.instruction, table)
+        return self.visit(node.instruction, table)
 
     def visit_Assignment(self, node, table):
         #print node.id
@@ -103,16 +210,16 @@ class TypeChecker(NodeVisitor):
         rightType = self.visit(node.expression, table)
 
         if leftType == None:
-            print 'Undeclared Variable'
+            print 'Line '+str(node.expression.line)+': Variable '+ node.id+' is not declared'
         elif rightType == 'undefined':
             return
         elif not (leftType == rightType or (leftType == 'float' and rightType == 'int')):
-            print 'Incompatibile type of operands'
+            print 'Line '+str(node.expression.line)+': Incorrect assignment - '+rightType+' to '+leftType
 
     def visit_Choice(self, node, table):
         self.visit(node.condition, table)
         self.visit(node.instruction1, SymbolTable(table, 'choice_instr1'))
-        if(node.instruction2):
+        if (node.instruction2):
             self.visit(node.instruction2, SymbolTable(table, 'choice_instr2'))
 
     def visit_While(self, node, table):
@@ -128,12 +235,9 @@ class TypeChecker(NodeVisitor):
         if isinstance(table.name, FunctionSymbol):
             rettype = self.visit(node.expression, table)
             if rettype != 'undefined':
-                expected_rettype = table.name.type
-                if rettype != expected_rettype:
-                    print 'Wrong return expression type, expected '
-                #print rettype+ ' '+expected_rettype
-        else: # global scope
-            print 'Return statement used outside a function'
+                expectedRettype = table.name.type
+                if rettype != expectedRettype:
+                    print 'Line '+str(node.expression.line)+': incorrect return type, expected  '+expectedRettype+', found '+rettype
 
     def visit_Keyword(self, node, table):
         #print node.keyword
@@ -145,13 +249,13 @@ class TypeChecker(NodeVisitor):
         if isinstance(table.name, FunctionSymbol):
             nextTable = table
         else:
-            nextTable = SymbolTable(table,'blockInstr')
+            nextTable = SymbolTable(table, 'blockInstr')
 
         self.visit(node.declarations, nextTable)
         self.visit(node.instructions, nextTable)
 
     def visit_Condition(self, node, table):
-        self.visit(node.expression, table)
+        return self.visit(node.expression, table)
 
     def visit_Integer(self, node, table):
         return 'int'
@@ -165,18 +269,17 @@ class TypeChecker(NodeVisitor):
     def visit_Variable(self, node, table):
         symbol = table.get(node.name)
         if isinstance(symbol, VariableSymbol):
-            #print 'DEBUG: Captured variable symbol ' + symbol.name + ' of type ' + symbol.type
             return symbol.type
         elif isinstance(symbol, FunctionSymbol):
-            #print 'error - is a function (expected a variable) '+node.name
+            print 'Line '+str(node.line)+': '+node.name+' is a function expected a variable '
             return 'undefined'
         else:
-            #print 'error - is not defined '+node.name
+            print 'Line '+str(node.line)+': '+node.name+' is not declared '
             return 'undefined'
 
     def visit_BinExpression(self, node, table):
         #print node.operator
-        type1 =self.visit(node.expression1, table)
+        type1 = self.visit(node.expression1, table)
         type2 = self.visit(node.expression2, table)
 
         if type1 == 'undefined' or type2 == 'undefined':
@@ -184,15 +287,15 @@ class TypeChecker(NodeVisitor):
 
         operator = node.operator
 
-        result_type = 'undefined'
+        result_type = self.check_new_type(type1,operator,type2)
         if result_type == 'undefined':
-            #print operator+' operand are not allowed'
+            print 'Line '+str(node.line)+': Operator '+node.operator+' is not allowed here'
             return 'undefined'
 
         return result_type
 
     def visit_ExpressionInParentheses(self, node, table):
-        self.visit(node.expression, table)
+        return self.visit(node.expression, table)
 
     def visit_Funcall(self, node, table):
         #print node.id
@@ -202,40 +305,38 @@ class TypeChecker(NodeVisitor):
             expressions = []
             tmp = node.expressionList
             if not isinstance(tmp, AST.Empty):
-                if(tmp.expression):
+                if (tmp.expression):
                     expressions.append(tmp.expression)
-                while(tmp.expressionList):
+                while (tmp.expressionList):
                     tmp = tmp.expressionList
-                    if(not isinstance(tmp, AST.Empty)):
+                    if (not isinstance(tmp, AST.Empty)):
                         expressions.append(tmp.expression)
             expressions.reverse()
             expressionsTypes = [self.visit(expression, table) for expression in expressions]
-            print expressionsTypes
+            #print expressionsTypes
             expectedExpressionsTypes = [arg.type for arg in symbol.arguments]
-            print expectedExpressionsTypes
+            #print expectedExpressionsTypes
 
             if 'undefined' in expressionsTypes:
                 return 'undefined'
 
             if len(expressionsTypes) != len(expectedExpressionsTypes):
-                print 'Wrong number of parameters'
+                print 'Line '+str(node.line)+': Wrong number of parameters, expected '+str(len(expectedExpressionsTypes))+', found '+str(len(expressionsTypes))
 
-            for exprType, expectedType, i in zip(expressionsTypes, expectedExpressionsTypes, range(1, len(expressionsTypes) + 1)):
+            for exprType, expectedType, i in zip(expressionsTypes, expectedExpressionsTypes,
+                                                 range(1, len(expressionsTypes) + 1)):
                 if exprType != expectedType and not (exprType == 'int' and expectedType == 'float'):
-                    print 'Wrong parameter type'
+                    print 'Line '+str(node.line)+': Incorrect type of parameter, expected '+expectedType+", found "+exprType
                     return 'undefined'
             return symbol.type
-        elif isinstance(symbol, FunctionSymbol):
-            print 'This is not a function'
-            return 'undefined'
         else:
-            print 'Function undefined'
+            print 'Line '+str(node.line)+': '+node.id+' is not a function or undefined'
             return 'undefined'
 
     def visit_ExpressionList(self, node, table):
-        if(node.expressionList):
+        if (node.expressionList):
             self.visit(node.expressionList, table)
-        if(node.expression):
+        if (node.expression):
             self.visit(node.expression, table)
 
     def visit_FunctionDefinitions(self, node, table):
@@ -246,34 +347,35 @@ class TypeChecker(NodeVisitor):
         arguments = []
         tmp = node.argList
         if not isinstance(tmp, AST.Empty):
-            if(tmp.arg):
+            if (tmp.arg):
                 arguments.append(tmp.arg)
-            while(tmp.argList):
+            while (tmp.argList):
                 tmp = tmp.argList
-                if(not isinstance(tmp, AST.Empty)):
+                if (not isinstance(tmp, AST.Empty)):
                     arguments.append(tmp.arg)
         arguments.reverse()
         funcSymbol = FunctionSymbol(node.id, node.type, arguments)
         if not table.put(funcSymbol):
-            print 'error already defined'
+            print 'Line '+str(node.argList.line)+': '+node.id+' already defined'
 
         functionTable = SymbolTable(table, funcSymbol)
 
         for arg in arguments:
             if not functionTable.put(VariableSymbol(arg.id, arg.type)):
-                print 'Parameter ' + arg.id + ' already declared'
+                print 'Line '+str(node.argList.line)+': Parameter ' + arg.id + ' already declared'
 
         self.visit(node.compoundInstruction, functionTable)
 
     def visit_ArgumentList(self, node, table):
-        if(node.argList):
+        if (node.argList):
             self.visit(node.argList, table)
-        if(node.arg):
+        if (node.arg):
             self.visit(node.arg, table)
 
     def visit_Argument(self, node, table):
         #print node.type, node.id
         pass
+
     def visit_Empty(self, node, table):
         pass
 

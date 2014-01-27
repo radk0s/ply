@@ -1,22 +1,40 @@
+float a = 0, b = 8, a = 0.0;
+string str = "A";
 
-float a = 0, b = 8, c = 0.0;
+int gcd(int m, int n) {
 
-int gcd(int m, string n, float h) {
-
-int res = 0;
+int res = 0, res2 = 0;
+q = a;
+str = a;
+res2 = gcd(a, b);
+res2 = res(a, b);
+res2 = reee(a, b);
 if (m!=n) {
     if (m > n)
         res = gcd(m-n, n);
     else
-        res = gcd(n-m, m);
+        res = gcd(n-m, m, 7);
 }
 else
     res = m;
-
 print res;
 return res;
 }
-
+string foo(int a, int a){
+    float b = 5;
+    return gcd;
+}
+string bar(){
+    return 7.9;
+}
+string bar(){
+    return "a";
+}
+string foobar(){
+    int m = 9;
+    m = 6.5 + "4";
+    return fjh;
+}
 while(a >= b ) {
     a = 1/2*(a+b/a);
 }
